@@ -1,0 +1,53 @@
+
+    classDiagram
+    class PaymentProcessor {
+        -payment_strategy: PaymentStrategy
+        +set_strategy(strategy: PaymentStrategy) void
+        +process_payment(amount: float) bool
+    }
+
+    class PaymentStrategy {
+        <<Interface>>
+        balance: float
+        +pay(amount: float) bool
+        +add_funds(amount: float) bool
+        +get_balance_info() Optional~str~
+    }
+
+    class CreditCardPaymentStrategy {
+        -card_number: str
+        -expiry_date: str
+        -cvv: str
+        -balance: float
+        +__init__(card_number, expiry_date, cvv, initial_balance=0.0)
+        +pay(amount: float) bool
+        +add_funds(amount: float) bool
+        +get_balance_info() str
+    }
+
+    class PayPalPaymentStrategy {
+        -email: str
+        -balance: float
+        +__init__(email, initial_balance=0.0)
+        +pay(amount: float) bool
+        +add_funds(amount: float) bool
+        +get_balance_info() str
+    }
+
+    class CryptoPaymentStrategy {
+        -wallet_address: str
+        -balance: float
+        +__init__(wallet_address, initial_balance=0.0)
+        -MIN_FEE_PERCENTAGE_OF_AMOUNT: float
+        -MIN_ABSOLUTE_FEE: float
+        -MAX_ABSOLUTE_FEE: float
+        -_calculate_fee(amount_to_send: float) float
+        +pay(amount_to_send: float) bool
+        +add_funds(amount: float) bool
+        +get_balance_info() str
+    }
+
+    PaymentProcessor o-- "1" PaymentStrategy : Uses
+    PaymentStrategy <|.. CreditCardPaymentStrategy : Implements
+    PaymentStrategy <|.. PayPalPaymentStrategy : Implements
+    PaymentStrategy <|.. CryptoPaymentStrategy : Implements
